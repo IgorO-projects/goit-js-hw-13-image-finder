@@ -6,6 +6,7 @@ const refs = {
     searchForm: document.querySelector('#search-form'),
     loadMoreBtn: document.querySelector('.js-btn-load-more'),
     imageCardList: document.querySelector('.gallery'),
+    header: document.querySelector('.header')
 }
 
 // main js 
@@ -27,6 +28,7 @@ function onSearch (event) {
 
 function loadMore () {
     picApiService.fetchArticles().then(appendImageCardMarkup);
+    scrollGallery(picApiService.pageNumber);
 }
 
 function appendImageCardMarkup(hits) {
@@ -35,4 +37,11 @@ function appendImageCardMarkup(hits) {
 
 function clearImageCardList () {
     refs.imageCardList.innerHTML = '';
+}
+
+function scrollGallery (page) {
+    window.scrollTo({
+        top: (refs.imageCardList.clientHeight / page) * (page - 1) + refs.header.clientHeight, 
+        behavior: "smooth"
+    })
 }
