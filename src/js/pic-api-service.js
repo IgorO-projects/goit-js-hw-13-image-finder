@@ -5,14 +5,16 @@ export default class PicApiService {
     constructor() {
         this.searchQuery = '';
         this.pageNumber = 1;
+        this.totalHits = 0;
     }
 
-    fetchArticles() {
+    async fetchArticles() {
         const url = `${BASE_URL}?image_type=photo&orientation=horizontal&q=${this.searchQuery}&page=${this.pageNumber}&per_page=12&key=${API_KEY}`; 
 
-        return fetch(url)
+        return await fetch(url)
         .then(response => response.json())
         .then(data => {
+            this.totalHits = data.totalHits;
             this.incrementPage();
             return data.hits;
         }); 
