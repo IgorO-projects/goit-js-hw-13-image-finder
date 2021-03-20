@@ -12,7 +12,6 @@ const refs = {
     searchForm: document.querySelector('#search-form'),
     imageCardList: document.querySelector('.gallery'),
     header: document.querySelector('.header'),
-    gallery: document.querySelector('.gallery'),
 }
 
 // CLASSES
@@ -22,7 +21,7 @@ const loadMoreBtn = new LoadMoreBtn;
 // LISTENERS
 refs.searchForm.addEventListener('submit', onSearch);
 loadMoreBtn.button.addEventListener('click', loadMore);
-refs.gallery.addEventListener('click', openModal);
+refs.imageCardList.addEventListener('click', openModal);
 
 // FUNCTIONS
 function onSearch(event) {
@@ -42,11 +41,13 @@ function onSearch(event) {
 
 function loadMore() {
     loadMoreBtn.loading();
-    render();
+    render().then(() => {
+        scrollGallery(picApiService.pageNumber);
+    })
 }
 
 function render() {
-    picApiService.fetchArticles()
+    return picApiService.fetchArticles()
     .then(hits => {
         appendImageCardMarkup(hits);
         if(!picApiService.totalHits) throw new Error;
@@ -55,7 +56,8 @@ function render() {
         } else {
             loadMoreBtn.loaded();
         }
-        scrollGallery(picApiService.pageNumber);
+        // scrollGallery(picApiService.pageNumber);
+        return hits;
     })
     .catch(() => {
         Pnotify.error({
